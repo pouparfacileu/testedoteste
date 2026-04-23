@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Bom Sabor - Menu Digital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .opcao-saco {
+            background: rgba(230, 126, 34, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px dashed #e67e22;
+        }
+
+        .opcao-saco label {
+            font-size: 0.9rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .opcao-saco input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #e67e22;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cart-btn-fixed" onclick="toggleCart()">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <span id="cart-count">0</span>
+    </div>
+
+    <section class="hero">
+        <div id="status-loja">
+            <span class="neon-vermelho">● FECHADO</span>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="logo-texto">O Bom Sabor</h1>
+            <p class="subtitulo">COMIDA TRADICIONAL EM MONTE GORDO</p>
+            <button id="btn-menu-dinamico" class="btn-principal" onclick="abrirMenu()">
+                VER MENU COMPLETO
+            </button>
+        </div>
+    </section>
+
+    <section class="info-footer">
+        <div class="horarios-container">
+            <div class="coluna-horario">
+                <h3><i class="fa-regular fa-clock"></i> Horario de Atendimento</h3>
+                <p>Segunda - Domingo: 11:00 - 13:45</p>
+                <p>Segunda - Sabado: 18:00 - 20:45</p>
+            </div>
+            <div class="coluna-horario">
+                <h3><i class="fa-solid fa-utensils"></i> Servico de Take-away</h3>
+                <p>Almoco: 11:40 - 13:45</p>
+                <p>Jantar: 18:45 - 20:40</p>
+            </div>
+        </div>
+        <div class="mapa-wrapper">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3183.123456789!2d-7.4475!3d37.1802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd103f6955555555%3A0x5555555555555555!2sR.%20Pedro%20Alvares%20Cabral%2C%20Monte%20Gordo!5e0!3m2!1spt!2spt!4v1620000000000!5m2!1spt!2spt" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="mapa-label">
+                <i class="fa-solid fa-location-dot"></i> R. Pedro Alvares Cabral, Monte Gordo
+            </div>
+        </div>
+    </section>
+
+    <div id="modal-menu" class="modal">
+        <div class="modal-content-full">
+            <div class="menu-modal-topbar">
+                <button class="btn-voltar-menu" type="button" onclick="fecharMenu()" aria-label="Voltar atras e fechar menu">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Voltar</span>
+                </button>
+                <span class="menu-modal-label">Escolha o seu prato</span>
+            </div>
+
+            <div class="menu-container">
+                <div class="categorias-sidebar">
+                    <div class="cat-item active" onclick="filtrar('Dia')">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        <span>Hoje</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Grelhados')">
+                        <i class="fa-solid fa-fire-burner"></i>
+                        <span>Grelhados</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Pizzas')">
+                        <i class="fa-solid fa-pizza-slice"></i>
+                        <span>Pizzas</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Petiscos')">
+                        <i class="fa-solid fa-shrimp"></i>
+                        <span>Petiscos</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Sobremesas')">
+                        <i class="fa-solid fa-ice-cream"></i>
+                        <span>Doces</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Bebidas')">
+                        <i class="fa-solid fa-bottle-water"></i>
+                        <span>Bebidas</span>
+                    </div>
+                    <div class="cat-item" onclick="filtrar('Acompanhamentos')">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Extras</span>
+                    </div>
+                </div>
+
+                <div class="pratos-conteudo">
+                    <h3 id="titulo-modal">MENU DE HOJE</h3>
+                    <div id="lista-pratos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="carrinho-lateral">
+        <div class="cart-header">
+            <h3>O SEU PEDIDO</h3>
+            <span class="fechar-carrinho" onclick="toggleCart()" style="cursor:pointer; font-size:25px;">×</span>
+        </div>
+
+        <div class="cart-tabs">
+            <button class="tab-btn active" onclick="mudarAba('itens')">1. ITENS</button>
+            <button class="tab-btn" onclick="mudarAba('dados')">2. DADOS</button>
+        </div>
+
+        <div class="cart-body">
+            <div id="tab-itens" class="tab-content active">
+                <div id="itens-lista"></div>
+                <div class="total-container">
+                    <div class="total-linha">
+                        <span>TOTAL:</span>
+                        <span id="valor-total">0.00EUR</span>
+                    </div>
+                    <label class="opcao-saco-label">
+                        <input type="checkbox" id="check-saco" onchange="atualizarTotalComSaco()">
+                        Preciso de saco plastico (+0.20EUR)
+                    </label>
+                </div>
+            </div>
+
+            <div id="tab-dados" class="tab-content">
+                <div class="campo-form-carrinho">
+                    <label>NOME *</label>
+                    <input type="text" id="cliente-nome" placeholder="Como se chama?">
+                </div>
+                <div class="campo-form-carrinho">
+                    <label>TELEMOVEL *</label>
+                    <input type="tel" id="cliente-tel" placeholder="9xxxxxxxx">
+                </div>
+                <div class="campo-form-carrinho">
+                    <label>EMAIL</label>
+                    <input type="email" id="cliente-email" placeholder="seu@email.com">
+                </div>
+                <div class="campo-form-carrinho">
+                    <label>HORA DE LEVANTAMENTO *</label>
+                    <select id="hora-pedido"></select>
+                </div>
+                <div class="campo-form-carrinho">
+                    <label>METODO DE PAGAMENTO *</label>
+                    <select id="metodo-pagamento">
+                        <option value="MB Way">MB Way</option>
+                        <option value="Multibanco">Multibanco (No Local)</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <button class="btn-finalizar" onclick="finalizarPedido()">FINALIZAR NO WHATSAPP</button>
+        </div>
+    </div>
+
+    <div id="modal-detalhe-pizza" class="modal">
+        <div class="modal-content" style="max-width: 400px; border: 1px solid #e67e22;">
+            <h2 id="detalhe-nome-pizza" style="color:#e67e22;">Pizza</h2>
+            <div class="campo-form">
+                <label>Escolha o Tamanho:</label>
+                <select id="tamanho-pizza" onchange="atualizarPrecoFinal()">
+                    <option value="mini">Mini</option>
+                    <option value="media">Media</option>
+                    <option value="familiar">Familiar</option>
+                </select>
+            </div>
+            <div class="campo-form">
+                <label>Instrucoes:</label>
+                <textarea id="obs-pizza" placeholder="Ex: tirar cebola"></textarea>
+            </div>
+            <div class="campo-form" style="display:flex; align-items:center; justify-content:space-between;">
+                <label>Quantidade:</label>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button onclick="mudarQuantidade(-1)" class="btn-opcao" style="width:35px; height:35px;">-</button>
+                    <span id="qtd-pizza" style="font-weight:bold;">1</span>
+                    <button onclick="mudarQuantidade(1)" class="btn-opcao" style="width:35px; height:35px;">+</button>
+                </div>
+            </div>
+            <button class="btn-finalizar" onclick="confirmarPizza()">CONFIRMAR - <span id="preco-total-pizza">0.00EUR</span></button>
+            <p onclick="fecharOpcoes()" style="text-align:center; color:#888; cursor:pointer; margin-top:15px;">Cancelar</p>
+        </div>
+    </div>
+
+    <div id="modal-grelhados" class="modal">
+        <div class="modal-content" style="max-width: 450px; border: 1px solid #e67e22;">
+            <h2 id="grelhado-nome" style="color:#e67e22;">Grelhado</h2>
+            <div id="lista-acompanhamentos" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <div class="campo-form">
+                <label>Observacoes:</label>
+                <textarea id="obs-grelhado" placeholder="Ex: Mal passado..."></textarea>
+            </div>
+            <button class="btn-finalizar" onclick="confirmarGrelhado()">CONFIRMAR</button>
+            <p onclick="fecharModalGrelhados()" style="text-align:center; color:#888; cursor:pointer; margin-top:15px;">Cancelar</p>
+        </div>
+    </div>
+
+    <div id="toast-carrinho" class="toast-carrinho" aria-live="polite" aria-atomic="true">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>
+            <strong>Adicionado ao carrinho</strong>
+            <span id="toast-carrinho-texto"></span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXdL8jBVtbPb7igyrorQMK2_hlfxHrB5Q",
+            authDomain: "o-bom-sabor.firebaseapp.com",
+            projectId: "o-bom-sabor",
+            storageBucket: "o-bom-sabor.firebasestorage.app",
+            messagingSenderId: "97332979372",
+            appId: "1:97332979372:web:99ad9a0bc69525b1dd6109",
+            measurementId: "G-2EZ7G3TL7L",
+            databaseURL: "https://o-bom-sabor-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        window.db = firebase.database();
+
+        db.ref("estado_loja").on("value", (snap) => {
+            const statusElemento = document.getElementById('status-loja');
+            if (snap.val() === true) {
+                statusElemento.innerHTML = '<span class="neon-verde">● ABERTO</span>';
+            } else {
+                statusElemento.innerHTML = '<span class="neon-vermelho">● FECHADO</span>';
+            }
+        });
+
+        db.ref("estoque").on("value", (snapshot) => {
+            const estoque = snapshot.val();
+            if (!estoque) return;
+
+            Object.keys(estoque).forEach(id => {
+                const dados = estoque[id];
+
+                const labelsNome = document.querySelectorAll(`[id^="nome-${id}"]`);
+                labelsNome.forEach(el => {
+                    if (dados.nome_custom) el.innerText = dados.nome_custom;
+                });
+
+                const precoDose = document.getElementById(`preco-${id}`);
+                const precoMeia = document.getElementById(`preco-${id}_meia`);
+                if (precoDose && dados.preco) precoDose.innerText = parseFloat(dados.preco).toFixed(2) + "EUR";
+                if (precoMeia && dados.preco_meia) precoMeia.innerText = parseFloat(dados.preco_meia).toFixed(2) + "EUR";
+
+                const botoes = document.querySelectorAll(`[id^="btn-${id}"]`);
+                const cards = document.querySelectorAll(`[id^="card-${id}"]`);
+                if (dados.esgotado) {
+                    botoes.forEach(btn => {
+                        btn.innerText = "ESGOTADO";
+                        btn.disabled = true;
+                        btn.classList.add('btn-esgotado');
+                    });
+                    cards.forEach(card => card.style.opacity = "0.5");
+                } else {
+                    botoes.forEach(btn => {
+                        btn.disabled = false;
+                        if (btn.innerText === "ESGOTADO") btn.innerText = "Escolher";
+                        btn.classList.remove('btn-esgotado');
+                    });
+                    cards.forEach(card => card.style.opacity = "1");
+                }
+            });
+        });
+
+        function atualizarTotalComSaco() {
+            if (typeof atualizarCarrinho === "function") atualizarCarrinho();
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
